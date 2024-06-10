@@ -1,6 +1,6 @@
 // backend/index.js
 const express = require("express");
-const rootRouter = require("./routes/index");
+const rootRouter = require("./api/index")
 
 const app = express();
 

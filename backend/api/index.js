@@ -1,6 +1,6 @@
 const express = require('express');
 
-const router = root.router();
+const router = root.Router();
 
 module.exports = router;
 
