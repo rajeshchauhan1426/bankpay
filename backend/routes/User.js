@@ -2,7 +2,8 @@ const express = require("express")
 const router = express.Router();
 const zod = require("zod");
 const { JWT_SECRET } = require("../config");
-const res = require("express/lib/response");
+const { authMiddleware } = require("../Middleware");
+const { User, Account } = require("../db");
 
 
 const signupBody = zod.object({
@@ -20,10 +21,10 @@ router.post("/signup" , async (req, res) => {
         })
     }
 
-    const existingUSer = await User.findOne({
+    const existingUser = await User.findOne({
         username: req.body.username
     })
-    if(existingUSer){
+    if(existingUser){
         return res.status(411).json({
             message: " Email is already taken /  bad crediantials"
         })
@@ -36,7 +37,12 @@ router.post("/signup" , async (req, res) => {
         lastName: req.body.lastName,
     })
 
-    const UserId = User._id;
+    const UserId = user._id;
+
+    await Account.create({
+        userId,
+        balance: 1 + Math.random() * 10000
+    })
 
     const token = jwt.sign({
         UserId
@@ -84,6 +90,58 @@ router.post("/signin" ,async (req, res) => {
         message: " Error while logging in"
     })
 })
+
+const updateBody = zod.object({
+    password: zod.string().optional(),
+    firstName: zod.string().optional(),
+    lastName:zod.string().optional()
+})
+
+
+router.put("/",  authMiddleware , async(req,res) => {
+    const { success} = updateBody.safeParse(req.body)
+    if(!success){
+        res.status(411).json({
+            message: " Error while updateing information"
+        })
+    }
+
+    await User.updateOne({_id: req.UserId} , req.body);
+
+    res.json({
+        message: "updated sucessfully"
+    })
+})
+
+
+router.get("/bulk", async (req,res) => {
+    const filter = req.query.filter || "";
+    const users = await user.find({
+        $:[{
+            firstName: {
+                "$regex" : filter
+
+            }
+        }, {
+            lastName: {
+                "$regex": filter
+            }
+        }]
+    })
+    res.json({
+        user: users.map(user => ({
+            username:user.username,
+            firstName:user.firstName,
+            lastName:user.lastName,
+            _id: user._id
+        }))
+    })
+    
+})
+
+
+
+
 
 module.export = router;
 
