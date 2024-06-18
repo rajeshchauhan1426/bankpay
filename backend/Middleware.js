@@ -1,6 +1,6 @@
 
 const {JWT_SECRET} = require("./config")
-const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");sdfrtdfsdf
 
 
 const authMiddleware = (req, res, next) => {
