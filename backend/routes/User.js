@@ -4,7 +4,7 @@ const zod = require("zod");
 const { JWT_SECRET } = require("../config");
 const { authMiddleware } = require("../Middleware");
 const { User, Account } = require("../db");
-
+const jwt = require("jsonwebtoken");
 
 const signupBody = zod.object({
     username: zod.string().email(),
