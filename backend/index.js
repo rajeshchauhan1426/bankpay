@@ -1,7 +1,7 @@
-// backend/index.js
+
 const express = require("express");
 const cors = require("cors");
-const rootRouter = require("./api/index"); // Adjust the path as necessary
+const rootRouter = require("./api/index"); 
 
 const app = express();
 
